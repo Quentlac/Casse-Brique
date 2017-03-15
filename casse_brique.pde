@@ -189,10 +189,17 @@ void balle(){
   if(balleX < 7 && direc_ball == 4)direc_ball = 1;
   
   //barre en bas
+  if(type_bonus != 4){
   if(balleY > 480 && balleX > barX && balleX < (barX + (taille_bar / 2)))direc_ball = 3;
   else if(balleY > 480 && balleX > (barX + (taille_bar/2)) && balleX < (barX + taille_bar))direc_ball = 2;
-  else if(balleY > 480) {game_over = 0;delay(2000);}
-  
+  else if(balleY > 480) {game_over = 0;
+    delay(1000);}
+  }
+  else{
+   if(balleY > 480 && direc_ball == 4)direc_ball = 3;
+   else if(balleY > 480 && direc_ball == 1)direc_ball = 2; 
+    
+  }
   if(balleY > 480 && balleX > barX && balleX < (barX + taille_bar)){
      int X_ball_bar = balleX - barX;//position de la balle par rapport à la barre
      X_ball_bar /= 10;
@@ -210,10 +217,21 @@ void balle(){
     niv[caseY][caseX] = 0;
     score += 10;
    if(type_bonus != 3){ 
-    if(direc_ball == 3)direc_ball = 4;
-    else if(direc_ball == 4)direc_ball = 3;
-    else if(direc_ball == 2)direc_ball = 1;
-    else if(direc_ball == 1)direc_ball = 2;
+    
+    if(balleX < ((caseX * 80)+5) || balleX > ((caseX * 80)+75)){
+      
+      if(direc_ball == 3)direc_ball = 2;
+      else if(direc_ball == 4)direc_ball = 1;
+      else if(direc_ball == 2)direc_ball = 3;
+      else if(direc_ball == 1)direc_ball = 4;
+    }
+    else{
+      if(direc_ball == 3)direc_ball = 4;
+      else if(direc_ball == 4)direc_ball = 3;
+      else if(direc_ball == 2)direc_ball = 1;
+      else if(direc_ball == 1)direc_ball = 2;
+      
+    }
   }}
   
 }
@@ -222,7 +240,8 @@ void gameOver(){
 background(0);
 bonus = 0;
 score = 0;
-active_bonus = 0;
+active_bonus = 1;
+tmp_bonus = 0;
 fill(255,255,255);
 rect(0,0,800,500);
 PImage image;
@@ -303,18 +322,25 @@ void afficheBonus(){
 void activeBonus(){
   if(init_bonus == 1){
     init_bonus = 0;
-    type_bonus = round(random(1,3));
+    type_bonus = round(random(1,4));
     if(type_bonus == 1 || type_bonus == 2)tmp_bonus = 10000;
-    if(type_bonus == 3);tmp_bonus = 8000;
+    if(type_bonus == 3)tmp_bonus = 8000;
+    if(type_bonus == 4)tmp_bonus = 10000;
   }
   if(tmp_bonus < 0){
      active_bonus = 0;
-     if(type_bonus == 1 || type_bonus == 2) taille_bar = 100;
+     if(type_bonus == 1 || type_bonus == 2 || type_bonus == 4) taille_bar = 100;
      type_bonus = 0;
   }
   else{
      if(type_bonus == 1) taille_bar = 200;
-     if(type_bonus == 2) taille_bar = 50; 
+     if(type_bonus == 2) taille_bar = 50;
+     if(type_bonus == 4) {
+       if(tmp_bonus > 2000)fill(127,143,166);
+       else fill(158,57,27);
+       rect(0,(barY-12),800,10);
+       barre();
+     }
      tmp_bonus -= 10;
   }
   
